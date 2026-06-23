@@ -1,6 +1,7 @@
 import FilaDesembarque from './FilaDesembarque';
 
-export default function ListaDesembarques() {
+// Ahora recibimos las nuevas funciones desde App
+export default function ListaDesembarques({ datos, prioritarios, togglePrioridad }) {
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
       <thead>
@@ -15,10 +16,15 @@ export default function ListaDesembarques() {
         </tr>
       </thead>
       <tbody>
-        {/* Renderizamos 3 filas de prueba estáticas para ver cómo luce */}
-        <FilaDesembarque />
-        <FilaDesembarque />
-        <FilaDesembarque />
+        {datos.map((lote) => (
+          <FilaDesembarque 
+            key={lote.id} 
+            lote={lote} 
+            // Comprobamos si el ID de este lote está en el arreglo de guardados
+            esPrioritario={prioritarios.includes(lote.id)} 
+            togglePrioridad={togglePrioridad} 
+          />
+        ))}
       </tbody>
     </table>
   );
