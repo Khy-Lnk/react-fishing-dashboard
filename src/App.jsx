@@ -8,13 +8,15 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // NUEVO: Estado para los lotes prioritarios. Inicializa leyendo el localStorage.
+  // NUEVO: Estados para manejar los filtros de búsqueda
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('');
+
   const [prioritarios, setPrioritarios] = useState(() => {
     const guardados = localStorage.getItem('lotesPrioritarios');
     return guardados ? JSON.parse(guardados) : [];
   });
 
-  // NUEVO: Cada vez que "prioritarios" cambie, guardamos el arreglo en localStorage
   useEffect(() => {
     localStorage.setItem('lotesPrioritarios', JSON.stringify(prioritarios));
   }, [prioritarios]);
@@ -37,16 +39,20 @@ function App() {
     obtenerDatos();
   }, []);
 
-  // NUEVO: Función para agregar o quitar un ID de la lista de prioritarios
   const togglePrioridad = (id) => {
     if (prioritarios.includes(id)) {
-      // Si ya estaba, lo quitamos (lo filtramos fuera del arreglo)
       setPrioritarios(prioritarios.filter(favId => favId !== id));
     } else {
-      // Si no estaba, lo agregamos al arreglo
       setPrioritarios([...prioritarios, id]);
     }
   };
+
+  // NUEVO: Lógica que cruza los datos con lo que el usuario busca (ignorando mayúsculas/minúsculas)
+  const desembarquesFiltrados = desembarques.filter((lote) => {
+    const coincideEspecie = lote.especie.toLowerCase().includes(busqueda.toLowerCase());
+    const coincideEstado = filtroEstado === '' || lote.estado === filtroEstado;
+    return coincideEspecie && coincideEstado;
+  });
 
   return (
     <main style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '900px', margin: '0 auto' }}>
@@ -55,14 +61,21 @@ function App() {
         <h2 style={{ margin: '0', color: '#555', fontSize: '1.2rem' }}>Pesquera Talcahuano Sur SpA</h2>
       </header>
 
-      <BuscadorFiltro />
+      {/* Pasamos los estados y funciones al buscador */}
+      <BuscadorFiltro 
+        busqueda={busqueda} 
+        setBusqueda={setBusqueda}
+        filtroEstado={filtroEstado}
+        setFiltroEstado={setFiltroEstado}
+      />
       
       {loading && <p>Cargando lotes desde el muelle...</p>}
       {error && <p style={{ color: 'red', fontWeight: 'bold' }}>Error: {error}</p>}
       
+      {/* Pasamos la lista YA FILTRADA a la tabla */}
       {!loading && !error && (
         <ListaDesembarques 
-          datos={desembarques} 
+          datos={desembarquesFiltrados} 
           prioritarios={prioritarios} 
           togglePrioridad={togglePrioridad} 
         />
