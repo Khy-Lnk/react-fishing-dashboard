@@ -48,3 +48,5 @@ The project was analyzed using the **SonarLint** extension in Visual Studio Code
 
 ## Author:
 * **Yerko T. Hermosilla** - *FrontEnd Development & React Architecture* - [GitHub Profile](https://github.com/Khy-Lnk)
+
+<img width="1908" height="881" alt="react-fishing-dashboard" src="https://github.com/user-attachments/assets/1a9b667f-e3f7-4897-a26b-3bfe8404cedc" />
